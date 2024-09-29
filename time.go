@@ -99,7 +99,9 @@ func ParseDTG(s string) (Time, error) {
 		return Time{}, ErrNotEnoughChars
 	}
 
-	// Check if the string is valid.
+	// Check if the string is valid by comparing the length of the string
+	// to the length of the date-time-group regular expression string.
+	// There should be no additional or missing characters.
 	if len(s) != len(dtgRegex.FindString(s)) {
 		return Time{}, ErrInvalidDateTimeGroup
 	}

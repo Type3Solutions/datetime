@@ -147,10 +147,41 @@ func TestParseDTG(t *testing.T) {
 			want:  NewTime(time.Date(2020, 2, 29, 2, 0, 0, 0, ZULU.Location())),
 			error: nil,
 		},
+		{
+			name:  "invalid timezone",
+			input: "010100🇺🇸JAN21",
+			want:  Time{},
+			error: ErrInvalidDateTimeGroup,
+		},
+		{
+			name:  "20th century year",
+			input: "010100ZJAN99",
+			want:  NewTime(time.Date(1999, 1, 1, 1, 0, 0, 0, ZULU.Location())),
+			error: nil,
+		},
+		{
+			name:  "21st century year",
+			input: "010100ZJAN00",
+			want:  NewTime(time.Date(2000, 1, 1, 1, 0, 0, 0, ZULU.Location())),
+			error: nil,
+		},
+		{
+			name:  "invalid year",
+			input: "010100ZJAN1940",
+			want:  Time{},
+			error: ErrYearOutOfRange,
+		},
+		{
+			name:  "invalid day for month",
+			input: "310100ZFEB21",
+			want:  Time{},
+			error: ErrInvalidDay,
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			got, err := ParseDTG(tt.input)
 			if !errors.Is(err, tt.error) {
 				t.Errorf("got %v, want %v", err, tt.error)
