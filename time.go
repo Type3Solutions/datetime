@@ -27,13 +27,28 @@ func NewTime(t time.Time) Time {
 	return Time{t}
 }
 
-// ParseDTG parses a date-time-group string in the format
+// ParseDTG parses a military date-time-group string in the format
+// DDHH[MM](Z)[ MMM YY[YY] and returns a Time object.
 func ParseDTG(s string) (Time, error) {
-	t, err := time.Parse("200601021504", s)
+	// Remove all spaces from the string.
+	s = removeSpaces(s)
+
+	// Parse the month.
+	mon, err := parseMonth(s)
 	if err != nil {
 		return Time{}, err
 	}
+
+	// Parse the year.
+	year, err := parseYear(s)
+	if err != nil {
+		return Time{}, err
+	}
+
+	t := time.Date(year, mon, 1, 0, 0, 0, 0, time.UTC)
+
 	return NewTime(t), nil
+
 }
 
 // removeSpaces removes all spaces from a string.

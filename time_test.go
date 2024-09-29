@@ -3,6 +3,7 @@ package mildtg
 import (
 	"errors"
 	"testing"
+	"time"
 )
 
 func TestParseTimeZones(t *testing.T) {
@@ -47,6 +48,37 @@ func TestParseTimeZones(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := parseTimeZone(tt.input)
+			if !errors.Is(err, tt.error) {
+				t.Errorf("got %v, want %v", err, tt.error)
+			}
+
+			if got != tt.want {
+				t.Errorf("got %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestParseDTG(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name  string
+		input string
+		want  Time
+		error error
+	}{
+		{
+			name:  "valid",
+			input: "010100ZJAN21",
+			want:  NewTime(time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC)),
+			error: nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := ParseDTG(tt.input)
 			if !errors.Is(err, tt.error) {
 				t.Errorf("got %v, want %v", err, tt.error)
 			}

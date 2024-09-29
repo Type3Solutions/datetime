@@ -25,6 +25,8 @@ const (
 var (
 	// ErrInvalidMonth is returned when an invalid month is provided.
 	ErrInvalidMonth = errors.New("invalid month")
+	// ErrInvalidDay is returned when an invalid day is provided.
+	ErrInvalidDay = errors.New("invalid day")
 )
 
 var (
@@ -91,10 +93,9 @@ func parseMonth(s string) (time.Month, error) {
 	}
 }
 
-// month returns the month from a date-time-group string.
-func month(s string) (time.Month, error) {
-	s = removeSpaces(strings.ToUpper(s))
-	return parseMonth(s)
+// parseDay returns the day from a date-time-group string.
+func parseDay(s string, maxDays int) (int, error) {
+	return 0, ErrInvalidDay
 }
 
 // daysInMonth returns the number of days in a month and year.
