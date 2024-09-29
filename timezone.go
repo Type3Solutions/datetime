@@ -123,20 +123,3 @@ var (
 		yankee:   YANKEE,
 	}
 )
-
-// parseTimeZone parses a time zone designation string.
-func parseTimeZone(s string) (timeZone, error) {
-	tz := timeZone{}
-
-	if len(s) < 1 || len(s) > 1 {
-		return tz, ErrInvalidTimeZone
-	}
-
-	tz.letter = rune(s[0])
-
-	if tzOut, ok := timeZones[tz.letter]; ok {
-		return tzOut, nil
-	} else {
-		return tz, ErrInvalidTimeZone
-	}
-}
