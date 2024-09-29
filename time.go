@@ -1,8 +1,19 @@
 package mildtg
 
 import (
+	"errors"
+	"regexp"
 	"strings"
 	"time"
+)
+
+var (
+	// ErrNotEnoughChars is returned when an invalid date-time-group is provided.
+	ErrNotEnoughChars = errors.New("date-time-group too short minimum is ddhhmm")
+)
+
+var (
+	secondsRegex = regexp.MustCompile(`[0-5][0-9]`)
 )
 
 // Time wraps a time.Time to allow for custom
@@ -28,26 +39,47 @@ func NewTime(t time.Time) Time {
 }
 
 // ParseDTG parses a military date-time-group string in the format
-// DDHH[MM](Z)[ MMM YY[YY] and returns a Time object.
+// DDHH[MM]|[MMSS]|(A-Z)[ MMM YY[YY] and returns a Time object.
 func ParseDTG(s string) (Time, error) {
 	// Remove all spaces from the string.
 	s = removeSpaces(s)
 
-	// Parse the month.
-	mon, err := parseMonth(s)
+	// The minimum length of a date-time-group string is six (DDHHMM).
+	if len(s) < 6 {
+		return Time{}, ErrNotEnoughChars
+	}
+
+	day := int(s[0]-'0')*10 + int(s[1]-'0')
+	hour := int(s[2]-'0')*10 + int(s[3]-'0')
+	minute := int(s[4]-'0')*10 + int(s[5]-'0')
+
+	second := 0
+	tz := ZULU
+	i := 6
+	// Check for the optional second field (SS).
+	if len(s) >= 8 {
+		secondsStr := s[i : i+2]
+		if secondsRegex.MatchString(secondsStr) {
+			second = int(s[i]-'0')*10 + int(s[i+1]-'0')
+			i += 2
+		} else {
+			// No seconds field, check for the time zone designation
+			// at the current index.
+			second = 0
+		}
+	}
+
+	_, m, err := parseMonth(s)
 	if err != nil {
 		return Time{}, err
 	}
 
-	// Parse the year.
 	year, err := parseYear(s)
 	if err != nil {
 		return Time{}, err
 	}
 
-	t := time.Date(year, mon, 1, 0, 0, 0, 0, time.UTC)
-
-	return NewTime(t), nil
+	return NewTime(time.Date(year, m, day, hour, minute, second, 0, tz.Location())), nil
 
 }
 

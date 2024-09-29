@@ -2,6 +2,7 @@ package mildtg
 
 import (
 	"errors"
+	"fmt"
 	"regexp"
 	"strings"
 	"time"
@@ -30,20 +31,20 @@ var (
 )
 
 var (
-	janRegex = regexp.MustCompile(`JAN|JANUARY`)
-	febRegex = regexp.MustCompile(`FEB|FEBRUARY`)
-	marRegex = regexp.MustCompile(`MAR|MARCH`)
-	aprRegex = regexp.MustCompile(`APR|APRIL`)
-	mayRegex = regexp.MustCompile(`MAY`)
-	junRegex = regexp.MustCompile(`JUN|JUNE`)
-	julRegex = regexp.MustCompile(`JUL|JULY`)
-	augRegex = regexp.MustCompile(`AUG|AUGUST`)
-	sepRegex = regexp.MustCompile(`SEP|SEPTEMBER`)
-	octRegex = regexp.MustCompile(`OCT|OCTOBER`)
-	novRegex = regexp.MustCompile(`NOV|NOVEMBER`)
-	decRegex = regexp.MustCompile(`DEC|DECEMBER`)
+	// monthRegex is a regular expression to match a three-letter month
+	// or the full month name followed by zero or more numbers.
+	// No non-numerical characters are allowed after the month (e.g., "JANUARYY").
+	monthRegex = regexp.MustCompile(`(?i)` +
+		`(JAN(uary)?|FEB(ruary)?|MAR(ch)?|APR(il)?|` +
+		`MAY|JUN(e)?|JUL(y)?|AUG(ust)?|SEP(tember)?|` +
+		`OCT(ober)?|NOV(ember)?|DEC(ember)?)([0-9\s]*)$`)
+
+	// noMonthRegex is a regular expression to match a date-time-group
+	// string that does not contain a month.
+	noMonthRegex = regexp.MustCompile(`(?i)^(0[1-9]|2[0-9]|3[01])([0-1][0-9]|2[0-3])([0-5][0-9])([0-5][0-9])?[A-Z]\d{0,4}$`)
 )
 
+// monthMap maps the three-letter month abbreviation to the time.Month type.
 var months = map[string]time.Month{
 	jan: time.January,
 	feb: time.February,
@@ -59,43 +60,35 @@ var months = map[string]time.Month{
 	dec: time.December,
 }
 
-// parseMonth returns the month from a date-time-group string.
-func parseMonth(s string) (time.Month, error) {
-	s = strings.ToUpper(removeSpaces(s))
-
-	switch {
-	case janRegex.MatchString(s):
-		return time.January, nil
-	case febRegex.MatchString(s):
-		return time.February, nil
-	case marRegex.MatchString(s):
-		return time.March, nil
-	case aprRegex.MatchString(s):
-		return time.April, nil
-	case mayRegex.MatchString(s):
-		return time.May, nil
-	case junRegex.MatchString(s):
-		return time.June, nil
-	case julRegex.MatchString(s):
-		return time.July, nil
-	case augRegex.MatchString(s):
-		return time.August, nil
-	case sepRegex.MatchString(s):
-		return time.September, nil
-	case octRegex.MatchString(s):
-		return time.October, nil
-	case novRegex.MatchString(s):
-		return time.November, nil
-	case decRegex.MatchString(s):
-		return time.December, nil
-	default:
-		return 0, ErrInvalidMonth
+// parseMonth returns the index of the month in the string
+// if it exists.
+// If there is no month (e.g., "270000Z"), the current month
+// is returned.
+// If there is an invalid month, (e.g., "270000Z JANUARYY"),
+// an error is returned.
+func parseMonth(s string) (string, time.Month, error) {
+	if noMonthRegex.MatchString(s) {
+		// No month in the string.
+		return "", time.Now().UTC().Month(), nil
 	}
-}
 
-// parseDay returns the day from a date-time-group string.
-func parseDay(s string, maxDays int) (int, error) {
-	return 0, ErrInvalidDay
+	// Extract the month from the string.
+	matches := monthRegex.FindStringSubmatch(s)
+	if len(matches) == 0 {
+		return "", 0, ErrInvalidMonth
+	}
+
+	// Extract the month abbreviation.
+	m := strings.ToUpper(matches[1][:3])
+
+	// Check if the month is valid.
+	month, ok := months[m]
+	if !ok {
+		fmt.Printf("month: %s", m)
+		return "", 0, ErrInvalidMonth
+	}
+
+	return matches[1], month, nil
 }
 
 // daysInMonth returns the number of days in a month and year.
