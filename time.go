@@ -1,15 +1,18 @@
 package mildtg
 
 import (
+	"bytes"
 	"errors"
+	"fmt"
 	"regexp"
 	"strings"
 	"time"
 )
 
 const (
-	minYear = 1941 // The U.S. entered World War II in 1941.
-	maxYear = 9999 // The maximum year allowed.
+	minYear    = 1941 // The U.S. entered World War II in 1941.
+	maxYear    = 9999 // The maximum year allowed.
+	invalidDTG = "INVALID DTG"
 )
 
 const (
@@ -75,7 +78,60 @@ type Time struct {
 
 // String returns the date-time-group in the format
 func (t Time) String() string {
-	return t.Format("200601021504")
+	if t.IsZero() {
+		return invalidDTG
+	}
+
+	days := t.Day()
+	hours := t.Hour()
+	minutes := t.Minute()
+	seconds := t.Second()
+	month := t.Month()
+	year := t.Year()
+	tz := t.Location().String()
+
+	b := bytes.NewBuffer(make([]byte, 0, 30))
+
+	// Day
+	if days < 10 {
+		b.WriteString("0")
+	}
+	b.WriteString(fmt.Sprintf("%d", days))
+
+	// Hour
+	if hours < 10 {
+		b.WriteString("0")
+	}
+	b.WriteString(fmt.Sprintf("%d", hours))
+
+	// Minute
+	if minutes < 10 {
+		b.WriteString("0")
+	}
+	b.WriteString(fmt.Sprintf("%d", minutes))
+
+	// Only export seconds if they are not zero
+	if seconds != 0 {
+		if seconds < 10 {
+			b.WriteString("0")
+		}
+		b.WriteString(fmt.Sprintf("%d", seconds))
+	}
+
+	// Timezone
+	b.WriteString(tz)
+
+	b.WriteString(" ")
+
+	// Month
+	b.WriteString(strings.ToUpper(month.String()[0:3]))
+
+	b.WriteString(" ")
+
+	// Year
+	b.WriteString(fmt.Sprintf("%d", year%100))
+
+	return b.String()
 }
 
 // Format returns the date-time-group in the format

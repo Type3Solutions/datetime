@@ -6,6 +6,40 @@ import (
 	"time"
 )
 
+func TestTime_String(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name  string
+		input Time
+		want  string
+	}{
+		{
+			name:  "valid time",
+			input: NewTime(time.Date(2021, 1, 1, 1, 0, 0, 0, ZULU.Location())),
+			want:  "010100Z JAN 21",
+		},
+		{
+			name:  "valid time with non-zulu timezone",
+			input: NewTime(time.Date(2021, 1, 1, 1, 0, 0, 0, ROMEO.Location())),
+			want:  "010100R JAN 21",
+		},
+		{
+			name:  "invalid time",
+			input: Time{},
+			want:  invalidDTG,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if tt.input.String() != tt.want {
+				t.Errorf("got %v, want %v", tt.input.String(), tt.want)
+			}
+		})
+	}
+}
+
 func TestParseDTG(t *testing.T) {
 	t.Parallel()
 
