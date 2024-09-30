@@ -1,8 +1,9 @@
 name: MILDTG Unit Tests
 on:
   push:
-    branches_ignore:
-      - main
+    branches:
+      - '!main'
+      - '**'
   pull_request:
     branches:
       - main
