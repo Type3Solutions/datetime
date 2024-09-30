@@ -581,3 +581,13 @@ func BenchmarkParseDTGBytes(b *testing.B) {
 		_ = t
 	}
 }
+
+func BenchmarkTime_String(b *testing.B) {
+	b.ReportAllocs()
+
+	t := NewTime(time.Date(2021, 1, 1, 1, 0, 0, 0, ZULU.Location()))
+
+	for i := 0; i < b.N; i++ {
+		_ = t.String()
+	}
+}
