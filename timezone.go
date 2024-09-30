@@ -16,6 +16,7 @@ const (
 	golf     = 'G'
 	hotel    = 'H'
 	india    = 'I'
+	juliet   = 'J'
 	kilo     = 'K'
 	lima     = 'L'
 	mike     = 'M'
@@ -77,6 +78,7 @@ var (
 	GOLF     = timeZone{golf, 7 * secondsInHour}      // Golf GMT +7
 	HOTEL    = timeZone{hotel, 8 * secondsInHour}     // Hotel GMT +8
 	INDIA    = timeZone{india, 9 * secondsInHour}     // India GMT +9
+	JULIET   = timeZone{juliet, 0}                    // Juliet local time zone
 	KILO     = timeZone{kilo, 10 * secondsInHour}     // Kilo GMT +10
 	LIMA     = timeZone{lima, 11 * secondsInHour}     // Lima GMT +11
 	MIKE     = timeZone{mike, 12 * secondsInHour}     // Mike GMT +12

@@ -324,9 +324,6 @@ func ParseDTGBytes(s string) (Time, error) {
 
 		year = int(digitsBeforeChar[2]-'0')*1000 + int(digitsBeforeChar[3]-'0')*100 +
 			int(digitsBeforeChar[4]-'0')*10 + int(digitsBeforeChar[5]-'0')
-
-	default:
-		return Time{}, ErrInvalidDateTimeGroup
 	}
 
 	// Parse the month and time zone from the chars slice.
@@ -339,7 +336,9 @@ func ParseDTGBytes(s string) (Time, error) {
 		tzStr := strings.ToUpper(string(chars[0]))
 		tzOut, ok := timeZones[rune(tzStr[0])]
 		if !ok {
-			return Time{}, ErrInvalidTimeZone
+			// Get the local offset.
+			offset := time.Now().UTC().Sub(time.Now()).Seconds() / 3600
+			tzOut = timeZone{letter: rune(tzStr[0]), offset: int32(offset)}
 		}
 
 		tz = tzOut
@@ -373,7 +372,9 @@ func ParseDTGBytes(s string) (Time, error) {
 
 			tzOut, tzFound := timeZones[rune(tzStr[0])]
 			if !tzFound {
-				return Time{}, ErrInvalidTimeZone
+				// Get the local offset.
+				offset := time.Now().UTC().Sub(time.Now()).Seconds() / 3600
+				tzOut = timeZone{letter: rune(tzStr[0]), offset: int32(offset)}
 			}
 
 			tz = tzOut
@@ -391,6 +392,8 @@ func ParseDTGBytes(s string) (Time, error) {
 		return Time{}, ErrInvalidDateTimeGroup
 	}
 
+	// The maximum length of the digitsAfterChar slice is four,
+	// and we should not see 1 or 3 digits.
 	switch len(digitsAfterChar) {
 	case 0:
 		// Do nothing.
@@ -410,8 +413,6 @@ func ParseDTGBytes(s string) (Time, error) {
 			int(digitsAfterChar[2]-'0')*10 + int(digitsAfterChar[3]-'0')
 
 		year = y
-	default:
-		return Time{}, ErrInvalidDateTimeGroup
 	}
 
 	// Check if the day is valid for the month and year.

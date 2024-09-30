@@ -5,4 +5,4 @@ bench:
 	go test -bench=. -benchmem ./...
 
 test-cover:
-	go test -v ./... -race -coverprofile=coverage.txt -covermode=atomic
+	go test -race -shuffle=on -coverprofile=coverage.txt ./... && go tool cover -html=coverage.txt
