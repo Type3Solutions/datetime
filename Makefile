@@ -3,3 +3,6 @@ test:
 
 bench:
 	go test -bench=. -benchmem ./...
+
+test-cover:
+	go test -v ./... -race -coverprofile=coverage.txt -covermode=atomic
