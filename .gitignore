@@ -1,3 +1,6 @@
 # Ignore JetBrains IDE files and VSCode settings
 .idea/*
 .vscode/*
+
+# Ignore coverage reports
+coverage.txt
