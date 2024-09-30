@@ -16,6 +16,7 @@ const (
 	golf     = 'G'
 	hotel    = 'H'
 	india    = 'I'
+	juliet   = 'J'
 	kilo     = 'K'
 	lima     = 'L'
 	mike     = 'M'
@@ -56,7 +57,7 @@ func (tz timeZone) Location() *time.Location {
 }
 
 const (
-	hour int32 = 3600 // seconds in an hour
+	secondsInHour int32 = 3600 // seconds in an hour
 )
 
 var (
@@ -67,31 +68,32 @@ var (
 // J is used to indicate the local time zone.
 
 var (
-	ZULU     = timeZone{zulu, 0 * hour}      // Zulu GMT +0
-	ALPHA    = timeZone{alpha, 1 * hour}     // Alpha GMT +1
-	BRAVO    = timeZone{bravo, 2 * hour}     // Bravo GMT +2
-	CHARLIE  = timeZone{charlie, 3 * hour}   // Charlie GMT +3
-	DELTA    = timeZone{delta, 4 * hour}     // Delta GMT +4
-	ECHO     = timeZone{echo, 5 * hour}      // Echo GMT +5
-	FOXTROT  = timeZone{foxtrot, 6 * hour}   // Foxtrot GMT +6
-	GOLF     = timeZone{golf, 7 * hour}      // Golf GMT +7
-	HOTEL    = timeZone{hotel, 8 * hour}     // Hotel GMT +8
-	INDIA    = timeZone{india, 9 * hour}     // India GMT +9
-	KILO     = timeZone{kilo, 10 * hour}     // Kilo GMT +10
-	LIMA     = timeZone{lima, 11 * hour}     // Lima GMT +11
-	MIKE     = timeZone{mike, 12 * hour}     // Mike GMT +12
-	NOVEMBER = timeZone{november, -1 * hour} // November GMT -1
-	OSCAR    = timeZone{oscar, -2 * hour}    // Oscar GMT -2
-	PAPA     = timeZone{papa, -3 * hour}     // Papa GMT -3
-	QUEBEC   = timeZone{quebec, -4 * hour}   // Quebec GMT -4
-	ROMEO    = timeZone{romeo, -5 * hour}    // Romeo GMT -5
-	SIERRA   = timeZone{sierra, -6 * hour}   // Sierra GMT -6
-	TANGO    = timeZone{tango, -7 * hour}    // Tango GMT -7
-	UNIFORM  = timeZone{uniform, -8 * hour}  // Uniform GMT -8
-	VICTOR   = timeZone{victor, -9 * hour}   // Victor GMT -9
-	WHISKEY  = timeZone{whiskey, -10 * hour} // Whiskey GMT -10
-	XRAY     = timeZone{xray, -11 * hour}    // X-ray GMT -11
-	YANKEE   = timeZone{yankee, -12 * hour}  // Yankee GMT -12
+	ZULU     = timeZone{zulu, 0 * secondsInHour}      // Zulu GMT +0
+	ALPHA    = timeZone{alpha, 1 * secondsInHour}     // Alpha GMT +1
+	BRAVO    = timeZone{bravo, 2 * secondsInHour}     // Bravo GMT +2
+	CHARLIE  = timeZone{charlie, 3 * secondsInHour}   // Charlie GMT +3
+	DELTA    = timeZone{delta, 4 * secondsInHour}     // Delta GMT +4
+	ECHO     = timeZone{echo, 5 * secondsInHour}      // Echo GMT +5
+	FOXTROT  = timeZone{foxtrot, 6 * secondsInHour}   // Foxtrot GMT +6
+	GOLF     = timeZone{golf, 7 * secondsInHour}      // Golf GMT +7
+	HOTEL    = timeZone{hotel, 8 * secondsInHour}     // Hotel GMT +8
+	INDIA    = timeZone{india, 9 * secondsInHour}     // India GMT +9
+	JULIET   = timeZone{juliet, 0}                    // Juliet local time zone
+	KILO     = timeZone{kilo, 10 * secondsInHour}     // Kilo GMT +10
+	LIMA     = timeZone{lima, 11 * secondsInHour}     // Lima GMT +11
+	MIKE     = timeZone{mike, 12 * secondsInHour}     // Mike GMT +12
+	NOVEMBER = timeZone{november, -1 * secondsInHour} // November GMT -1
+	OSCAR    = timeZone{oscar, -2 * secondsInHour}    // Oscar GMT -2
+	PAPA     = timeZone{papa, -3 * secondsInHour}     // Papa GMT -3
+	QUEBEC   = timeZone{quebec, -4 * secondsInHour}   // Quebec GMT -4
+	ROMEO    = timeZone{romeo, -5 * secondsInHour}    // Romeo GMT -5
+	SIERRA   = timeZone{sierra, -6 * secondsInHour}   // Sierra GMT -6
+	TANGO    = timeZone{tango, -7 * secondsInHour}    // Tango GMT -7
+	UNIFORM  = timeZone{uniform, -8 * secondsInHour}  // Uniform GMT -8
+	VICTOR   = timeZone{victor, -9 * secondsInHour}   // Victor GMT -9
+	WHISKEY  = timeZone{whiskey, -10 * secondsInHour} // Whiskey GMT -10
+	XRAY     = timeZone{xray, -11 * secondsInHour}    // X-ray GMT -11
+	YANKEE   = timeZone{yankee, -12 * secondsInHour}  // Yankee GMT -12
 )
 
 var (
@@ -123,20 +125,3 @@ var (
 		yankee:   YANKEE,
 	}
 )
-
-// parseTimeZone parses a time zone designation string.
-func parseTimeZone(s string) (timeZone, error) {
-	tz := timeZone{}
-
-	if len(s) < 1 || len(s) > 1 {
-		return tz, ErrInvalidTimeZone
-	}
-
-	tz.letter = rune(s[0])
-
-	if tzOut, ok := timeZones[tz.letter]; ok {
-		return tzOut, nil
-	} else {
-		return tz, ErrInvalidTimeZone
-	}
-}

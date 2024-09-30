@@ -2,99 +2,67 @@ package mildtg
 
 import (
 	"errors"
-	"regexp"
-	"strings"
 	"time"
 )
 
 const (
-	jan = "JAN"
-	feb = "FEB"
-	mar = "MAR"
-	apr = "APR"
-	may = "MAY"
-	jun = "JUN"
-	jul = "JUL"
-	aug = "AUG"
-	sep = "SEP"
-	oct = "OCT"
-	nov = "NOV"
-	dec = "DEC"
+	jan          = "JAN"
+	feb          = "FEB"
+	mar          = "MAR"
+	apr          = "APR"
+	may          = "MAY"
+	jun          = "JUN"
+	jul          = "JUL"
+	aug          = "AUG"
+	sep          = "SEP"
+	oct          = "OCT"
+	nov          = "NOV"
+	dec          = "DEC"
+	january      = "JANUARY"
+	february     = "FEBRUARY"
+	march        = "MARCH"
+	april        = "APRIL"
+	june         = "JUNE"
+	july         = "JULY"
+	august       = "AUGUST"
+	september    = "SEPTEMBER"
+	october      = "OCTOBER"
+	novemberLong = "NOVEMBER"
+	december     = "DECEMBER"
 )
 
 var (
 	// ErrInvalidMonth is returned when an invalid month is provided.
 	ErrInvalidMonth = errors.New("invalid month")
+	// ErrInvalidDay is returned when an invalid day is provided.
+	ErrInvalidDay = errors.New("invalid day")
 )
 
-var (
-	janRegex = regexp.MustCompile(`JAN|JANUARY`)
-	febRegex = regexp.MustCompile(`FEB|FEBRUARY`)
-	marRegex = regexp.MustCompile(`MAR|MARCH`)
-	aprRegex = regexp.MustCompile(`APR|APRIL`)
-	mayRegex = regexp.MustCompile(`MAY`)
-	junRegex = regexp.MustCompile(`JUN|JUNE`)
-	julRegex = regexp.MustCompile(`JUL|JULY`)
-	augRegex = regexp.MustCompile(`AUG|AUGUST`)
-	sepRegex = regexp.MustCompile(`SEP|SEPTEMBER`)
-	octRegex = regexp.MustCompile(`OCT|OCTOBER`)
-	novRegex = regexp.MustCompile(`NOV|NOVEMBER`)
-	decRegex = regexp.MustCompile(`DEC|DECEMBER`)
-)
-
+// monthMap maps the three-letter month abbreviation to the time.Month type.
 var months = map[string]time.Month{
-	jan: time.January,
-	feb: time.February,
-	mar: time.March,
-	apr: time.April,
-	may: time.May,
-	jun: time.June,
-	jul: time.July,
-	aug: time.August,
-	sep: time.September,
-	oct: time.October,
-	nov: time.November,
-	dec: time.December,
-}
-
-// parseMonth returns the month from a date-time-group string.
-func parseMonth(s string) (time.Month, error) {
-	s = strings.ToUpper(removeSpaces(s))
-
-	switch {
-	case janRegex.MatchString(s):
-		return time.January, nil
-	case febRegex.MatchString(s):
-		return time.February, nil
-	case marRegex.MatchString(s):
-		return time.March, nil
-	case aprRegex.MatchString(s):
-		return time.April, nil
-	case mayRegex.MatchString(s):
-		return time.May, nil
-	case junRegex.MatchString(s):
-		return time.June, nil
-	case julRegex.MatchString(s):
-		return time.July, nil
-	case augRegex.MatchString(s):
-		return time.August, nil
-	case sepRegex.MatchString(s):
-		return time.September, nil
-	case octRegex.MatchString(s):
-		return time.October, nil
-	case novRegex.MatchString(s):
-		return time.November, nil
-	case decRegex.MatchString(s):
-		return time.December, nil
-	default:
-		return 0, ErrInvalidMonth
-	}
-}
-
-// month returns the month from a date-time-group string.
-func month(s string) (time.Month, error) {
-	s = removeSpaces(strings.ToUpper(s))
-	return parseMonth(s)
+	jan:          time.January,
+	feb:          time.February,
+	mar:          time.March,
+	apr:          time.April,
+	may:          time.May,
+	jun:          time.June,
+	jul:          time.July,
+	aug:          time.August,
+	sep:          time.September,
+	oct:          time.October,
+	nov:          time.November,
+	dec:          time.December,
+	january:      time.January,
+	february:     time.February,
+	march:        time.March,
+	april:        time.April,
+	june:         time.June,
+	july:         time.July,
+	august:       time.August,
+	september:    time.September,
+	october:      time.October,
+	novemberLong: time.November,
+	december:     time.December,
 }
 
 // daysInMonth returns the number of days in a month and year.
