@@ -26,11 +26,11 @@ jobs:
 
       # Set up the environment
       - name: unit-tests
+        needs: setup
         run: make test
-        depends-on: [ setup ]
 
       # Run benchmarks
       - name: Run benchmarks
+        needs: setup
         run: make bench
-        depends-on: [ setup ]
 
