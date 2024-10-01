@@ -2,33 +2,8 @@ package mildtg
 
 import (
 	"errors"
+	"strings"
 	"time"
-)
-
-const (
-	jan          = "JAN"
-	feb          = "FEB"
-	mar          = "MAR"
-	apr          = "APR"
-	may          = "MAY"
-	jun          = "JUN"
-	jul          = "JUL"
-	aug          = "AUG"
-	sep          = "SEP"
-	oct          = "OCT"
-	nov          = "NOV"
-	dec          = "DEC"
-	january      = "JANUARY"
-	february     = "FEBRUARY"
-	march        = "MARCH"
-	april        = "APRIL"
-	june         = "JUNE"
-	july         = "JULY"
-	august       = "AUGUST"
-	september    = "SEPTEMBER"
-	october      = "OCTOBER"
-	novemberLong = "NOVEMBER"
-	december     = "DECEMBER"
 )
 
 var (
@@ -39,30 +14,20 @@ var (
 )
 
 // monthMap maps the three-letter month abbreviation to the time.Month type.
-var months = map[string]time.Month{
-	jan:          time.January,
-	feb:          time.February,
-	mar:          time.March,
-	apr:          time.April,
-	may:          time.May,
-	jun:          time.June,
-	jul:          time.July,
-	aug:          time.August,
-	sep:          time.September,
-	oct:          time.October,
-	nov:          time.November,
-	dec:          time.December,
-	january:      time.January,
-	february:     time.February,
-	march:        time.March,
-	april:        time.April,
-	june:         time.June,
-	july:         time.July,
-	august:       time.August,
-	september:    time.September,
-	october:      time.October,
-	novemberLong: time.November,
-	december:     time.December,
+var (
+	months map[string]time.Month
+)
+
+func init() {
+	months = make(map[string]time.Month)
+
+	for _, m := range []time.Month{
+		time.January, time.February, time.March, time.April, time.May, time.June,
+		time.July, time.August, time.September, time.October, time.November, time.December,
+	} {
+		months[strings.ToUpper(m.String()[:3])] = m
+		months[strings.ToUpper(m.String())] = m
+	}
 }
 
 // daysInMonth returns the number of days in a month and year.

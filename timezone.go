@@ -1,7 +1,6 @@
 package mildtg
 
 import (
-	"errors"
 	"strings"
 	"time"
 )
@@ -58,10 +57,6 @@ func (tz timeZone) Location() *time.Location {
 
 const (
 	secondsInHour int32 = 3600 // seconds in an hour
-)
-
-var (
-	ErrInvalidTimeZone = errors.New("invalid time zone")
 )
 
 // Time zone designations skip J (Juliet).
