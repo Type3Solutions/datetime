@@ -6,6 +6,44 @@ import (
 	"time"
 )
 
+func TestTime_Format(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name     string
+		input    Time
+		layout   string
+		expected string
+	}{
+		{
+			name:     "full year",
+			input:    NewTime(time.Date(2021, 1, 1, 1, 0, 0, 0, ZULU.Location())),
+			layout:   MILDTGFULLYEAR,
+			expected: "010100Z JAN 2021",
+		},
+		{
+			name:     "short year",
+			input:    NewTime(time.Date(2021, 1, 1, 1, 0, 0, 0, ZULU.Location())),
+			layout:   MILDTGSHORTYEAR,
+			expected: "010100Z JAN 21",
+		},
+		{
+			name:     "mmm-dd-yyyy",
+			input:    NewTime(time.Date(2021, 1, 1, 1, 0, 0, 0, ZULU.Location())),
+			layout:   "Jan-01-2006",
+			expected: "Jan-01-2021",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if tt.input.Format(tt.layout) != tt.expected {
+				t.Errorf("got %v, want %v", tt.input.Format(tt.layout), tt.expected)
+			}
+		})
+	}
+}
+
 func TestTime_String(t *testing.T) {
 	t.Parallel()
 
